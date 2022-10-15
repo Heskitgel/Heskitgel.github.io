@@ -4,7 +4,6 @@
 // CONSTANTS
 let CANVAS_WIDTH = 1280;
 let CANVAS_HEIGHT = 720;
-
 // variables
 let ui_colorbar;
 
