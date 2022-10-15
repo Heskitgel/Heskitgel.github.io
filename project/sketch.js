@@ -22,7 +22,7 @@ function setup(){
 	createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 
 	// draws background of hex code #ADD8E6
-	background(173, 216, 230);
+	background(255, 0, 0);
 }
 
 function draw() {
