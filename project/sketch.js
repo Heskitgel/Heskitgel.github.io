@@ -4,6 +4,7 @@
 // CONSTANTS
 let CANVAS_WIDTH = 1280;
 let CANVAS_HEIGHT = 720;
+
 // variables
 let ui_colorbar;
 
@@ -22,7 +23,7 @@ function setup(){
 	createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 
 	// draws background of hex code #ADD8E6
-	background(255, 0, 0);
+	background(173, 216, 230);
 }
 
 function draw() {
