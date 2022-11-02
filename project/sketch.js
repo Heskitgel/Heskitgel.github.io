@@ -1,6 +1,9 @@
 // we should declare functions and variables outside 
 // the scope of the main setup() and draw() functions here
 
+//import { WORDS } from "./words.js"; //array of word prompts to draw
+//let word = WORDS[Math.floor(Math.random() * WORDS.length]; // randomly chooses a prompt
+
 // CONSTANTS
 let CANVAS_WIDTH = 1280;
 let CANVAS_HEIGHT = 720;
@@ -11,15 +14,16 @@ let practiceStart = false; // determines if practice button was pressed
 // Tracks current brush color; initialized to black
 var currentColor = "black";
 
+// Tracks current line size in pixels; initialized to 15
+var lineSize = 15;
+
 function preload(){
 	// preload() is called before the start of the script,
 	// in order to load things in advance
 
-	// temporary UI bar asset is loaded on the website repository
-	// this is where we would preload all image assets
-	
+	// this is where we would preload all image assets	
 	ui_timer = loadImage('https://heskitgel.github.io/project/assets/timer.jpg');
-	ui_toolbar = loadImage('https://heskitgel.github.io/project/assets/tools.jpg');
+	home_background = loadImage('https://heskitgel.github.io/project/assets/home_background.jpg');
 }
 
 function setup(){
@@ -34,7 +38,7 @@ function setup(){
 	// play drawing game
 	gameButton = new Clickable(); // create button
 	gameButton.resize(150, 75);
-	gameButton.locate(CANVAS_WIDTH/4, (CANVAS_HEIGHT*2)/3); // position button
+	gameButton.locate(CANVAS_WIDTH*0.3, CANVAS_HEIGHT*0.6); // position button
 	gameButton.text = "Play Game"; // text on the button
 	gameButton.textSize = 20;
 	
@@ -57,7 +61,7 @@ function setup(){
 	// practice drawing mode
 	practiceButton = new Clickable(); // create button
 	practiceButton.resize(150, 75);
-	practiceButton.locate(CANVAS_WIDTH*0.60, (CANVAS_HEIGHT*2)/3); // position button
+	practiceButton.locate(CANVAS_WIDTH*0.55, CANVAS_HEIGHT*0.6); // position button
 	practiceButton.text = "Practice"; // text on the button
 	practiceButton.textSize = 20;
 	
@@ -76,6 +80,57 @@ function setup(){
 		practiceStart = true;
 		background(173, 216, 230);
 	}
+	
+	// increase line size by pressing button
+	sizeIncrease = new Clickable();
+	sizeIncrease.resize(50, 40);
+	sizeIncrease.locate(CANVAS_WIDTH-500, 10);
+	sizeIncrease.text = "↑";
+	sizeIncrease.textSize = 20;
+	sizeIncrease.onPress = function(){
+		if (lineSize < 100)
+		{
+			lineSize+=5;
+			displaySize.text = lineSize + "px";
+		}
+	}
+	// set normal button color
+	sizeIncrease.onOutside = function(){
+		sizeIncrease.color = "#DBDBDB";
+	}
+	// change color when hovered over
+	sizeIncrease.onHover = function(){
+		sizeIncrease.color = "#B5B5B5";
+	}
+	
+	// decrease line size by pressing button
+	sizeDecrease = new Clickable();
+	sizeDecrease.resize(50, 40);
+	sizeDecrease.locate(CANVAS_WIDTH-500, 50);
+	sizeDecrease.text = "↓";
+	sizeDecrease.textSize = 20;
+	sizeDecrease.onPress = function(){
+		if (lineSize > 5)
+		{
+			lineSize-=5;
+			displaySize.text = lineSize + "px";
+		}
+	}
+	// set normal button color
+	sizeDecrease.onOutside = function(){
+		sizeDecrease.color = "#DBDBDB";
+	}
+	// change color when hovered over
+	sizeDecrease.onHover = function(){
+		sizeDecrease.color = "#B5B5B5";
+	}
+	
+	// box displaying the current line weight
+	displaySize = new Clickable();
+	displaySize.resize(100, 100);
+	displaySize.locate(CANVAS_WIDTH-600, 0);
+	displaySize.textSize = 30;
+	displaySize.text = lineSize + "px";
 	
 	// color buttons
 	whiteButton = new Clickable(); //white
@@ -227,6 +282,8 @@ function draw() {
 	// don't want users to be able to draw on the home page
 	if (gameStart === false && practiceStart === false)
 	{
+		image(home_background, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); //adds background image to home page
+		
 		// add buttons to the canvas
 		gameButton.draw();
 		practiceButton.draw();
@@ -235,18 +292,32 @@ function draw() {
 		textSize(100);
 		textFont("helvetica");
 		textAlign(CENTER);
-		text('Quick Draw ✏️', CANVAS_WIDTH/2, CANVAS_HEIGHT/3);
+		text('Quick Draw ✏️', CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - 30);
 	}
 	
 	// draw() is called every frame, think of it as our main() method
 	// order matters!
 	// no longer on the home page; add drawing elements
 	else
-	{	
-		if (gameStart === true)
-		{
-			image(ui_timer, 0, 0, (CANVAS_WIDTH/10), (CANVAS_HEIGHT/8));
+	{
+		// drawing code
+		if (mouseIsPressed === true && mouseY >= 100 && pmouseY >= 100){ //can't draw above the tool bars
+			stroke(currentColor); //sets color of the line to the current color
+			strokeWeight(lineSize); //width of the line drawn
+			line(mouseX, mouseY, pmouseX, pmouseY);
+		}else{
+			fill(255);
 		}
+		
+		if (gameStart === true) //starting the game mode adds in a timer
+		{
+			image(ui_timer, 0, 0, (CANVAS_WIDTH/10), (CANVAS_HEIGHT/8)); //temporary UI
+		}
+
+		// add line size buttons
+		sizeIncrease.draw();
+		sizeDecrease.draw();
+		displaySize.draw();
 
 		// add first row of color buttons
 		whiteButton.draw();
@@ -266,22 +337,5 @@ function draw() {
 		lightpinkButton.draw();
 		fuchsiaButton.draw();
 		brownButton.draw();
-		
-		// displays our temporary UI art for our color selection bar
-		// first is the image variable, then the x position, y position,
-		// and then the width and height
-		image(ui_toolbar, (CANVAS_WIDTH/4), 0, (CANVAS_WIDTH/5), (CANVAS_HEIGHT/8));
-		
-		// places our color UI halfway across the X and 1/8th across the Y
-		
-		// sample drawing code
-		if (mouseIsPressed === true && mouseY >= 100 && pmouseY >= 100){ //can't draw above the tool bars
-			stroke(currentColor); //sets radius of dot to the current color
-			//fill(currentColor); //sets inside of dot to the current color
-			strokeWeight(15);
-			line(mouseX, mouseY, pmouseX, pmouseY);
-		}else{
-			fill(255);
-		}
 	}
 }
