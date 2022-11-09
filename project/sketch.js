@@ -7,6 +7,7 @@
 // CONSTANTS
 let CANVAS_WIDTH = 1280;
 let CANVAS_HEIGHT = 720;
+let CANVAS;
 let FR = 200; // Framerate of our app, the higher the smoother our drawing
 let gameStart = false; // determines if home menu buttons have been pressed
 let practiceStart = false; // determines if practice button was pressed
@@ -30,7 +31,7 @@ function preload(){
 function setup(){
 	// setup() is called once at the start of the script, 
 	// or when the webpage/client loads
-	createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+	CANVAS = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 	frameRate(FR);
 	// draws background of hex code #ADD8E6
 	background(173, 216, 230);
@@ -446,4 +447,12 @@ function setOpacity(inputColor, opacityPercent){
 	console.log("a = " + a);
 	let returnColor = color(r, g, b, a);
 	return returnColor;
+}
+
+function keyTyped(){
+	if (key === 'f'){
+		save(CANVAS, 'myImage.jpg');
+	}else{
+		return false;
+	}
 }
